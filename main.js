@@ -23,8 +23,8 @@ bot.login(config.token); // Discord authentification
 
 bot.on("ready", () => { // When the bot is ready
     bot.user.setActivity(config.game);
-    console.log("Je suis prêt !");
-    console.log(bot.guilds.size+" serveurs, "+bot.users.size+" utilisateurs et "+bot.channels.size+" salons");
+    console.log("I am Online !");
+    console.log(bot.guilds.size+" servers, "+bot.users.size+" users and "+bot.channels.size+" channels");
 });
 
 
@@ -77,20 +77,14 @@ bot.on("message", (message) => {
         */
         case "help":
             var helpEmbed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
-                .setAuthor("Bienvenue, "+message.author.username+"#"+message.author.discriminator, message.author.displayAvatarURL)
-                .setDescription("**Rappel** : `()` signifie paramètre facultatif et `[]` paramètre obligatoire")
-                .addField("👑 Commandes Administrateur", // Sets the title of the field
-                    "**"+config.prefix+"setcredits [@membre] [nombre]** - Change le nombre de crédits du membre mentionné !\n"+
-                    "**"+config.prefix+"premium [@membre]** - Passe un membre premium ou enlève le premium à un membre !\n"+
-                    "**"+config.prefix+"cooldown [work/rep] [@membre]** - Reset le cooldown de la commande pour le membre !"
-                )
-                .addField("👨 Commandes Utilisateur", // Sets the title of the field
-                    "**"+config.prefix+"profile (@membre)** - Affiche le profil d'un membre !\n"+
-                    "**"+config.prefix+"work** - Travaillez et gagnez des crédits !\n"+
-                    "**"+config.prefix+"rep [@membre]** - Donnez un point de réputation à un membre !\n"+
-                    "**"+config.prefix+"setbio [texte]** - Changez votre biographie !\n"+
-                    "**"+config.prefix+"pay [@membre] [montant]** - Payez un membre !\n"+
-                    "**"+config.prefix+"leaderboard** - Affiche le leaderboard !\n"
+                .setAuthor("Welcome, "+message.author.username+"#"+message.author.discriminator, message.author.displayAvatarURL)
+                .setDescription("**Reminder** : `()` means optional parameter and `[]` mandatory parameter")
+                .addField("👨 User Commands", // Sets the title of the field
+                    "**"+config.prefix+"profile (@membre)** - View a member's profile!\n"+
+                    "**"+config.prefix+"work** - Work and earn credits!\n"+
+                    "**"+config.prefix+"rep [@membre]** - Give a reputation point to a member!\n"+
+                    "**"+config.prefix+"pay [@membre] [montant]** - Pay a member!\n"+
+                    "**"+config.prefix+"leaderboard** - Displays the leaderboard!\n"
                 )
                 .setColor(config.embed.color) // Sets the color of the embed
                 .setFooter(config.embed.footer) // Sets the footer of the embed
@@ -109,28 +103,28 @@ bot.on("message", (message) => {
 
             // Check if the member is a bot
             if(member.user.bot){
-                return message.reply("les bots n'ont pas de profil !");
+                return message.reply("bots don't have a profile !");
             }
 
             // Gets the data of the guildMember whose profile you want to display
             var data = (message.member === member) ? authorData : membersData[0];
         
             var profileEmbed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
-                .setAuthor("Profil de "+member.user.username+" !", member.user.displayAvatarURL) // Sets the heading of the embed
+                .setAuthor("Profile of "+member.user.username+" !", member.user.displayAvatarURL) // Sets the heading of the embed
                 // if the member has a description, display them, else display "Aucune description enregistrée !"
-                .setDescription(data.desc !== "unknow" ? data.desc : "Aucune biographie enregistrée !")
+                .setDescription(data.desc !== "unknow" ? data.desc : "Internal AL3 Profile")
                 // Display the amount of credits of the member
-                .addField("💰 Argent", "**"+data.credits+"** crédit(s)", true)
+                .addField("💰 Balance", "**"+data.credits+"** AL3 Coins", true)
                 // Display the amount of reputation points of the member
-                .addField("🎩 Réputation", "**"+data.rep+"** point(s)", true)
+                .addField("🎩 Reputation", "**"+data.rep+"** points", true)
                 // If the member is premium, display "Oui !" else display "Non..."
-                .addField("👑 Premium", ((data.premium === "true") ? "Oui !" : "Non..."), true)
+                .addField("👑 Premium", ((data.premium === "true") ? "True" : "False"), true)
                 // Display the creation date of the member
-                .addField("📅 Enregistré", "Le "+data.registeredAt, true)
+                .addField("📅 Registration", ""+data.registeredAt, true)
                 // Display the level of the member
-                .addField("📊 Niveau", "**"+data.level+"**", true)
+                .addField("📊 Level", "**"+data.level+"**", true)
                 // Display the xp of the member
-                .addField("🔮 Expérience", "**"+data.xp+"** xp", true)
+                .addField("🔮 Experience", "**"+data.xp+"** xp", true)
                 .setColor(config.embed.color) // Sets the color of the embed
                 .setFooter(config.embed.footer) // Sets the footer of the embed
                 .setTimestamp();
@@ -146,18 +140,18 @@ bot.on("message", (message) => {
             var bio = args.join(" "); // Gets the description 
             // if the member has not entered a description, display an error message
             if(!bio){
-                return message.reply("veuillez entrer une biographie !");
+                return message.reply("please enter a biography !");
             }
             // if the description is too long, display an error message 
             if(bio.length > 100){
-                return message.reply("votre biographie ne doit pas excéder les 100 caractères !");
+                return message.reply("your biography must not exceed 100 characters !");
             }
 
             // save the description in the database
             usersData.set(message.author.id+".bio", bio);
 
             // Send a success message
-            message.reply("votre description vient d'être mise à jour !");
+            message.reply("your description has just been updated !");
             break;
 
         /**
@@ -169,31 +163,31 @@ bot.on("message", (message) => {
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
             if(!member){
-                return message.reply("vous devez mentionner un membre !");
+                return message.reply("you must mention a member !");
             }
 
             // if the user is a bot, cancel
             if(member.user.bot){
-                return message.reply("vous ne pouvez pas payer un bot !");
+                return message.reply("you can't pay a bot !");
             }
 
             // check if the receiver is the sender
             if(member.id === message.author.id){
-                return message.reply("vous ne pouvez pas vous payer vous même !");
+                return message.reply("you can't pay yourself !");
             }
 
             // gets the amount of credits to send
             var amountToPay = args[1];
             // if the member has not entered a valid amount, display an error message
             if(!amountToPay){
-                return message.reply("vous devez entrer un montant à verser à **"+member.user.username+"** !");
+                return message.reply("you must enter an amount to be paid to **"+member.user.username+"** !");
             }
             if(isNaN(amountToPay) || amountToPay < 1){
-                return message.reply("montant invalide.");
+                return message.reply("invalid amount.");
             }
             // if the member does not have enough credits
             if(amountToPay > authorData.credits){
-                return message.reply("vous ne disposez pas d'assez de crédits pour effectuer cette transaction !");
+                return message.reply("you do not have enough coins to complete this transaction !");
             }
 
             // Adding credits to the receiver
@@ -202,7 +196,7 @@ bot.on("message", (message) => {
             usersData.subtract(message.author.id+".credits", amountToPay);
 
             // Send a success message
-            message.reply("transaction effectuée.");
+            message.reply("Transaction completed.");
             break;
 
         /**
@@ -219,7 +213,7 @@ bot.on("message", (message) => {
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
                     let delay = functions.convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau travailler !");
+                    return message.reply("you must wait "+delay+" before you can work again !");
                 }
             }
     
@@ -228,15 +222,15 @@ bot.on("message", (message) => {
             cooldowns.work.set(message.author.id, towait);
             
             // Salary calculation (if the member is premium, the salary is doubled)
-            var salary = (authorData.premium === "true") ? 400 : 200;
+            var salary = (authorData.premium === "true") ? 20 : 10;
 
             // Add "premium" if the member is premium
-            var heading = (authorData.premium === "true") ? "Salaire premium récupéré !" : "Salaire récupéré !";
+            var heading = (authorData.premium === "true") ? "Premium salary received !" : "Salary received !";
 
             var embed = new Discord.RichEmbed() // Creates a new rich embed
                 .setAuthor(heading) // sets the heading of the embed
-                .setDescription(salary+" crédits ajoutés à votre profil !")
-                .setFooter("Pour les membres premiums, le salaire est doublé !")
+                .setDescription(salary+" AL3 coins added to your profile !")
+                .setFooter("For premium members, the salary is doubled !")
                 .setColor(config.embed.color) // Sets the color of the embed
                 .setTimestamp();
             
@@ -260,7 +254,7 @@ bot.on("message", (message) => {
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
                     let delay = functions.convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau executer cette commande !");
+                    return message.reply("you must wait "+delay+" before you can run this command again !");
                 }
             }
 
@@ -268,17 +262,17 @@ bot.on("message", (message) => {
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
             if(!member){
-                return message.reply("vous devez mentionner un membre !");
+                return message.reply("you must mention a member !");
             }
 
             // if the user is a bot, cancel
             if(member.user.bot){
-                return message.reply("vous ne pouvez pas donner un point de réputation à un bot !");
+                return message.reply("you can't give a bot a reputation point !");
             }
 
             // if the member tries to give himself a reputation point, dispaly an error message
             if(member.id === message.author.id){
-                return message.reply("vous ne pouvez pas vous donner vous-même un point de réputation !");
+                return message.reply("you can't give yourself a reputation point !");
             }
 
             // Records in the database the time when the member will be able to execute the command again (in 6 hours)
@@ -289,7 +283,7 @@ bot.on("message", (message) => {
             usersData.add(member.id+".rep", 1);
 
             // send a success message in the current channel
-            message.reply("vous avez bien donné un point de réputation à **"+member.user.username+"** !");
+            message.reply("you have given a reputation point to **"+member.user.username+"** !");
             break;
         
         /**
@@ -322,7 +316,7 @@ bot.on("message", (message) => {
             }
 
             // Creates a new ascii table and set the heading
-            var table = new AsciiTable("LEADERBOARD").setHeading("", "Utilisateur", "Argent", "Réputation");
+            var table = new AsciiTable("LEADERBOARD").setHeading("", "User", "Balance", "Reputation");
 
             // Put all users in the new table
             functions.fetchUsers(leaderboard, table, bot).then((newTable) => {
@@ -341,33 +335,33 @@ bot.on("message", (message) => {
         case "setcredits":
             // if the user is not an administrator
             if(!isAdmin){
-                return message.reply("vous ne pouvez pas exécuter cette commande !");
+                return message.reply("you cannot run this command !");
             }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
             if(!member){
-                return message.reply("vous devez mentionner un membre !");
+                return message.reply("you must mention a member !");
             }
 
             // if the user is a bot, cancel
             if(member.user.bot){
-                return message.reply("vous ne pouvez pas donner des crédits à un bot !");
+                return message.reply("you cannot give credits to a bot !");
             }
 
             // gets the amount of credits to send
             var toAdd = args[1];
             // if the member has not entered a valid amount, display an error message
             if(isNaN(toAdd) || !toAdd){
-                return message.reply("vous devez entrer un montant pour **"+member.user.username+"** !");
+                return message.reply("you must enter an amount for **"+member.user.username+"** !");
             }
 
             // Update user data
             usersData.set(member.id+".credits", parseInt(toAdd, 10));
         
             // Send success message in the current channel
-            message.reply("crédits définis à **"+toAdd+"** pour **"+member.user.username+"** !");
+            message.reply("set credits to **"+toAdd+"** for **"+member.user.username+"** !");
             break;
         
         /**
@@ -377,19 +371,19 @@ bot.on("message", (message) => {
        case "premium":
         // if the user is not administrator
             if(!isAdmin){
-                return message.reply("vous ne pouvez pas exécuter cette commande !");
+                return message.reply("you cannot run this command !");
             }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
             if(!member){
-                return message.reply("vous devez mentionner un membre !");
+                return message.reply("you must mention a member !");
             }
 
             // if the user is a bot, cancel
             if(member.user.bot){
-                return message.reply("vous ne pouvez pas passer un bot premium !");
+                return message.reply("you cannot pass a premium bot !");
             }
 
             // If the mentionned member isn"t premium
@@ -397,13 +391,13 @@ bot.on("message", (message) => {
                 // Update user data
                 usersData.set(member.id+".premium", "true");
                 // sends a message of congratulations in the current channel
-                message.channel.send(":tada: Félicitations "+member+" ! Vous faites désormais parti des membres premium !");
+                message.channel.send(":tada: Congratulation "+member+" ! You are now a premium member !");
             } 
             else { // if the member is premium
                 // Update user data
                 usersData.set(member.id+".premium", "false");
                 // send a message in the current channel
-                message.channel.send(":confused: Dommage "+member+"... Vous ne faites désormais plus parti des membres premium !");
+                message.channel.send(":confused: Shame "+member+"... You are no longer a premium member !");
             }
             break;
 
@@ -414,33 +408,33 @@ bot.on("message", (message) => {
         case "cooldown":
             // if the user is not administrator
             if(!isAdmin){
-                return message.reply("vous ne pouvez pas exécuter cette commande !");
+                return message.reply("you cannot run this command !");
             }
 
             // Gets the command 
             var cmd = args[0];
             // if the command is not rep or work or there is no command, display an error message
             if(!cmd || ((cmd !== "rep") && (cmd !== "work"))){
-                return message.reply("entrez une commande valide (rep ou work) !");
+                return message.reply("enter a valid command (rep or work) !");
             }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
             if(!member){
-                return message.reply("vous devez mentionner un membre !");
+                return message.reply("you must mention a member !");
             }
 
             // if the user is a bot, cancel
             if(member.user.bot){
-                return message.reply("vous ne pouvez pas reset le cooldown d'un bot !");
+                return message.reply("you cannot reset the cooldown of a bot !");
             }
 
             // Update cooldown db
             cooldowns[cmd].set(member.id, 0);
 
             // Send a success message
-            message.reply("le cooldown de **"+member.user.username+"** pour la commande **"+cmd+"** a été réinitialisé !");
+            message.reply("cooldown of **"+member.user.username+"** for using **"+cmd+"** has been set !");
             break;
     }
 
