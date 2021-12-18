@@ -130,10 +130,10 @@ module.exports = {
     printDate(pdate){
         // An array of the months
         let monthNames = [
-            "janvier", "février", "mars",
-            "avril", "mai", "juin", "juillet",
-            "août", "septembre", "octobre",
-            "novembre", "décembre"
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
         ];
     
         // Get date informations
@@ -144,7 +144,7 @@ module.exports = {
         minute = pdate.getMinutes();
     
         // Return a string of the date
-        return day+" "+monthNames[monthIndex]+" "+year+" à "+hour+"h"+minute;
+        return day+" "+monthNames[monthIndex]+" "+year+" "+hour+":"+minute;
     },
 
     /**
@@ -166,7 +166,7 @@ module.exports = {
         h += d * 24;
     
         // Return a string
-        return h+" heure(s) "+m+" minute(s) "+s+" seconde(s)";
+        return h+" hours "+m+" minutes "+s+" seconds";
     },
 
     /**
